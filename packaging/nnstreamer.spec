@@ -124,8 +124,11 @@ Source0:	nnstreamer-%{version}.tar.gz
 Source1:	generate-tarball.sh
 Source1001:	nnstreamer.manifest
 
+## Define requirements ##
+Requires: nnstreamer-core
+Requires: nnstreamer-configuration
+
 ## Define build requirements ##
-Requires:	gstreamer >= 1.8.0
 BuildRequires:	gstreamer-devel
 BuildRequires:	gst-plugins-base-devel
 BuildRequires:	gst-plugins-bad-devel
@@ -262,7 +265,20 @@ BuildRequires:	pkgconfig(orc-0.4)
 ## Define Packages ##
 %description
 NNStreamer is a set of gstreamer plugins to support general neural networks
-and their plugins in a gstreamer stream.
+and their plugins in a gstreamer stream. NNStreamer is a meta package of
+nnstreamer-core and nnstreamer-configuration
+
+%package core
+Requires: gstreamer >= 1.8.0
+Summary: NNStreamer core package
+%description core
+NNStreamer is a set of gstreamer plugins to support general neural networks
+and their plugins in a gstreamer stream, this package is core package without configuration
+
+%package configuration
+Summary: NNStreamer global configuration
+%description configuration
+NNStreamer's configuration setup for the end user.
 
 # for tensorflow
 %if 0%{?tensorflow_support}
@@ -370,7 +386,7 @@ NNStreamer's tensor_fliter subplugin of caffe2
 
 %package devel
 Summary:	Development package for custom tensor operator developers (tensor_filter/custom)
-Requires:	nnstreamer = %{version}-%{release}
+Requires:	nnstreamer-core = %{version}-%{release}
 Requires:	glib2-devel
 Requires:	gstreamer-devel
 %description devel
@@ -736,7 +752,7 @@ cp -r result %{buildroot}%{_datadir}/nnstreamer/unittest/
 
 %postun -p /sbin/ldconfig
 
-%files
+%files core
 %manifest nnstreamer.manifest
 %defattr(-,root,root,-)
 %license LICENSE
@@ -748,6 +764,8 @@ cp -r result %{buildroot}%{_datadir}/nnstreamer/unittest/
 %{_prefix}/lib/nnstreamer/filters/libnnstreamer_filter_cpp.so
 %{gstlibdir}/libnnstreamer.so
 %{_libdir}/libnnstreamer.so
+
+%files configuration
 %{_sysconfdir}/nnstreamer.ini
 
 # for tensorflow
